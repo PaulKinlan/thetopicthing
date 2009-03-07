@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>A Topical Search Engine</title>
+    <meta name="verify-v1" content="7fxTXIEt29YOU2NjVZzpSK6tzOzagUH6bSUFKcE7Z4o=" />
+    <link rel="stylesheet" type="text/css" href="/reset.css">
+    <link rel="stylesheet" type="text/css" href="/960.css">
+    <link rel="stylesheet" type="text/css" href="/text.css">
+    <link rel="stylesheet" type="text/css" href="/style.css"></script>
+    <script type="text/javascript">
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+        try {
+        var pageTracker = _gat._getTracker("UA-114468-5");
+        pageTracker._trackPageview();
+        } catch(err) {}</script>
+</head>
+<body style="text-align:center">
+    <div class="container_12" style="margin-top: 90px;">
+        <div class="grid_4" style="margin-bottom: 30px; text-align: left;">
+            <img src="/images/thetopicthing.png" />
+        </div>
+         <div class="grid_8" style="margin-top: 80px; margin-bottom:30px; vertical-align: middle; text-align: right; ">
+            <p style="font-size: 2em; font-style: italic">We search so you don't have to.</p>
+            <form method="get" action="/query">
+                <label for="topic" style="font-size:2.0em;">Search for: </label>
+                <input type="text" name="subject" value="" tabindex="1" maxlength="40" size="20" style="font-size:2.0em;"/>
+                <input type="submit" value="Search" style="font-size:2.0em;" />
+            </form>
+        </div>
+        <div class="grid_6 style2" style="text-align: left;">
+            <h2>Recent Searches</h2>
+            <ul>
+                {% for recent in recentSearches %}
+                <li><a href="/{{ recent.term }}">{{recent.clean}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="grid_6 style2" style="text-align: left;">
+            <h2>News</h2>
+            <p>12th November 2008</p>
+            <p>We have launched.  None of this beta stuff....  We like it rough!</p>
+        </div>
+        <div class="grid_12 style5 footer">
+            <p><a href="http://www.thetopicthing.com/">The Topic Thing</a> is part of the <a href="http://www.thethingnetwork.com/">The Thing Network</a>, developed and wholey owned by <a href="http://www.topicala.com/">Topicala Ltd</a>.  By using this site you agree to the terms and conditions set out in our <a href="http://www.topicala.com/about.shtml">Privacy Policy</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+body
+{
+	background-color: #FFFFFF;
+	font-family: "Trebuchet MS",Tahoma,Verdana;
+}
+
+a
+{
+	color: #00f;
+	text-decoration: dashed;
+}
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+h1
+{
+    font-family: "Trebuchet MS",Tahoma,Verdana;
+    font-size: 1.0em;
+}
+
+h2
+{
+    font-family: "Trebuchet MS",Tahoma,Verdana;
+    font-size: 1.0em;
+}
+
+.result
+{
+    text-align: left;
+}
+
+.result h1{
+    font-family: "Trebuchet MS",Tahoma,Verdana;
+    font-size: 1.0em;
+}
+
+h2
+{
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+
+.news
+{
+	margin-top: 50px;
+}
+
+.news ul
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	padding-bottom: 10px;
+}
+
+.news h2
+{
+	margin: 0;
+	padding: 0;
+}
+
+.banner
+{
+	min-height: 100px;
+	background-color: white;
+	color: white;
+	height: 251px;
+	font-size: 1em;
+}
+
+.form 
+{
+	background-color: #CEEBFB;
+}
+
+.border 
+{
+	border: solid 3px #6C7476;
+	padding-top: 5px;
+	padding-bottom: 5px;	
+}
+
+.banner p
+{
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.panel
+{
+	background-color: #A3D6F5;
+}
+
+.standardbreak
+{
+	margin-top: 20px;
+}
+
+.logo
+{
+	background: white url("/images/thecompanything.png") no-repeat;	
+}
+
+.logo p
+{
+	text-indent: -50cm;
+	vertical-align: center;
+}
+
+.disclaimer a
+{
+	color: #f00;
+	text-decoration: dashed;
+}
+
+.style1
+{
+	border-top: 10px solid #d61d00;
+	background-color: white;
+	min-height: 150px;
+}
+
+.style2
+{
+	border-top: 10px solid #0061a6;
+	background-color: white;
+	min-height: 150px;
+}
+
+.style3
+{
+	border-top: 10px solid #008000;
+	background-color: white;
+	min-height: 150px;
+}
+
+.style4
+{
+	border-top: 10px solid #99cc33;
+	background-color: white;
+}
+
+.style5
+{
+	border-top: 10px solid #ffd200;
+	background-color: white;
+}
+
+.related
+{
+    text-align: center;
+    
+}
+
+.related li
+{
+    float:left;
+    
+}

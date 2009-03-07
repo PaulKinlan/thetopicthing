@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>http://www.thetopicthing.com/index.html</loc>
+      <lastmod>{{ today }}</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+   </url>
+   {% for term in terms %}
+   <url>
+      <loc>http://www.thetopicthing.com/{{ term.term }}</loc>
+      <changefreq>daily</changefreq>
+   </url>
+   {% endfor %}
+</urlset>

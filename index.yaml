@@ -10,12 +10,19 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 33 times in query history.
+# Unused in query history -- copied from input.
 - kind: SearchResult
   ancestor: yes
 
-# Used 13 times in query history.
+# Unused in query history -- copied from input.
 - kind: SearchTerm
   properties:
   - name: firstQueryDateTime
     direction: desc
+
+- kind: SearchResult
+  properties:
+  - name: SearchProvider
+  - name: SearchTerm
+  - name: Last_Accessed
+

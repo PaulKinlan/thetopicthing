@@ -17,8 +17,23 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import memcache
 
 from google.appengine.api import urlfetch
+
+def memoize(keyformat, time=60):
+    """Decorator to memoize functions using memcache."""
+    def decorator(fxn):
+        def wrapper(*args, **kwargs):
+            key = keyformat % args[0:keyformat.count('%')]
+            data = memcache.get(key)
+            if data is not None:
+                return data
+            data = fxn(*args, **kwargs)
+            memcache.set(key, data, time)
+            return data
+        return wrapper
+    return decorator
 
 def ParseSimpleStringTag(tag, data):
     
@@ -144,6 +159,18 @@ class ResultRelatedHtmlEncoder():
 
 
 class Search(webapp.RequestHandler):
+    @memoize('subject:subject=%s')
+    def getSubject(self, subject):
+        return db.Query(Model.SearchTerm).filter("term =", subject).get()
+    @memoize('searchProviders')
+    def getSearchProviders(self):
+        return db.Query(Model.SearchProvider).filter("Category =", 'General' ).fetch(30)
+    @memoize('relatedProviders')	
+    def getRelatedProviders(self):
+        return db.Query(Model.SearchProvider).filter("Category =", 'Related' ).get()
+    def get(self, term, provider):
+        return db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("SearchProvider =",prov).get()
+
     'Searches for the top sites in a topic'
     def get(self, category = "", subject=""):        
         category = urllib.unquote_plus(category)        
@@ -165,14 +192,14 @@ class Search(webapp.RequestHandler):
         if category == "" or category is None:
             category = "General"
                 
-        cachedSubject = db.Query(Model.SearchTerm).filter("term =", subject).get()
+        cachedSubject = self.getSubject(subject)
         
         if cachedSubject is None:
             cachedSubject = Model.SearchTerm(term = subject)
             cachedSubject.put()
             
-        searchProviders = db.Query(Model.SearchProvider).filter("Category =", 'General' ).fetch(30)        
-        relatedProvider = db.Query(Model.SearchProvider).filter("Category =", 'Related' ).get()
+        searchProviders = self.getSearchProviders()    
+        relatedProvider = self.getRelatedProviders()
         
         midPoint = len(searchProviders) / 2
         
@@ -183,9 +210,11 @@ class Search(webapp.RequestHandler):
         encoder = ResultHtmlEncoder()
       
         searchTerm = cachedSubject
+        
+        currentTime = datetime.datetime.now() - datetime.timedelta(days = 1)
       
         for prov in providers1:
-            res = db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("SearchProvider =",prov).get()
+            res = db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("Last_Accessed >=", currentTime).filter("SearchProvider =",prov).get()
            
             if res is not None:
                 prov.TempResult = encoder.encode(parser.parse(res.Result, prov.Name))
@@ -193,7 +222,7 @@ class Search(webapp.RequestHandler):
             prov.HtmlUrl = prov.HtmlUrl.replace('{{query}}', subject)
      
         for prov in providers2:
-            res = db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("SearchProvider =",prov).get()
+            res = db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("Last_Accessed >=", currentTime).filter("SearchProvider =",prov).get()
             
             if res is not None:
                 prov.TempResult = encoder.encode(parser.parse(res.Result, prov.Name))
@@ -232,7 +261,9 @@ class SiteSearch(webapp.RequestHandler):
         
         if searchTerm is not None and provider is not None:
             query = db.Query(Model.SearchResult).filter("SearchTerm =",searchTerm).filter("SearchProvider =",provider).get()
-            
+        
+        currentTime = datetime.datetime.now() - datetime.timedelta(days = 1)
+        
         if query is None:
             query = Model.SearchResult()
             
@@ -246,8 +277,15 @@ class SiteSearch(webapp.RequestHandler):
             
             query.put()
         else:
+            if query.Last_Accessed >= currentTime:
+    	        url = provider.FeedUrl.replace("{{query}}", term)            
+                data = urlfetch.fetch(url).content            
+                data = data.decode('utf-8')            
+                query.Result = data
+                query.put()
+
             data = query.Result
-          
+
         if provider.FeedType == 'RSS':
             parser = RSSToResult()
         else:
@@ -258,9 +296,13 @@ class SiteSearch(webapp.RequestHandler):
         self.response.out.write(encoder.encode(parser.parse(data, site)))
 
 class Index(webapp.RequestHandler):
+    @memoize('recent')
+    def getRecentSearches(self):
+        return db.Query(Model.SearchTerm).order("-firstQueryDateTime").fetch(10, 0)
+
     def get(self, action = ""):
         path = os.path.join(os.path.dirname(__file__), 'index.html')
-        recentSearches = db.Query(Model.SearchTerm).order("-firstQueryDateTime").fetch(10, 0)
+        recentSearches = self.getRecentSearches()
         
         for recent in recentSearches:
             recent.clean = urllib.unquote(recent.term)
@@ -268,13 +310,20 @@ class Index(webapp.RequestHandler):
         self.response.out.write(template.render(path, { "recentSearches": recentSearches }))
 
 class SiteMap(webapp.RequestHandler):
+    @memoize('sitemap')
+    def getSearches(self):
+        recentSearches = db.Query(Model.SearchTerm).order("-firstQueryDateTime").fetch(500)
+        return recentSearches
+		
     def get(self, action = ""):
         path = os.path.join(os.path.dirname(__file__), "sitemapTemplate.xml");
-        recentSearches = db.Query(Model.SearchTerm).order("-firstQueryDateTime").fetch(500)
+        recentSearches = self.getSearches()
         
         templateOutput = template.render(path, {"terms": recentSearches, "today": datetime.date.today()})
         
         self.response.out.write(templateOutput)
+	
+	
 
 def un_unicode_string(string):
     'strip unicode characters'   

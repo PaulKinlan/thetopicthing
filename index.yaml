@@ -12,6 +12,13 @@ indexes:
 
 # Unused in query history -- copied from input.
 - kind: SearchResult
+  properties:
+  - name: SearchProvider
+  - name: SearchTerm
+  - name: Last_Accessed
+
+# Unused in query history -- copied from input.
+- kind: SearchResult
   ancestor: yes
 
 # Unused in query history -- copied from input.
@@ -19,10 +26,3 @@ indexes:
   properties:
   - name: firstQueryDateTime
     direction: desc
-
-- kind: SearchResult
-  properties:
-  - name: SearchProvider
-  - name: SearchTerm
-  - name: Last_Accessed
-

@@ -1,0 +1,4 @@
+cron:
+- description: Removes old Search Results so to reclaim space
+  url: /CleanUp
+  schedule: every 1 minutes

@@ -24,5 +24,8 @@ handlers:
 - url: /text.css
   static_files: text.css
   upload: text.css
+- url: /CleanUp
+  script: thetopicthing.py
+  login: admin
 - url: .*
   script: thetopicthing.py

@@ -322,15 +322,18 @@ class SiteMap(webapp.RequestHandler):
         templateOutput = template.render(path, {"terms": recentSearches, "today": datetime.date.today()})
         
         self.response.out.write(templateOutput)
-	
-	
 
+class CleanUp(webapp.RequestHandler):
+	def get(self):
+		results = db.Query(Model.SearchResult).filter("Added_On <", datetime.datetime.now() - datetime.timedelta(hours = 2) ).fetch(100)		
+		db.delete(results)
+		
 def un_unicode_string(string):
     'strip unicode characters'   
     return unicodedata.normalize('NFKD', unicode(string)).encode('ASCII', 'ignore')
 
 def main():
-    application = webapp.WSGIApplication([("/Sitemap.xml", SiteMap),("/Site/(.*)/(.*)", SiteSearch), ("/(.*)/(.*)", Search), ("/", Index), ("/(index.html)*", Index) ,("/(.*)", Search) ,("/query", Search)], debug=False)
+    application = webapp.WSGIApplication([("/Sitemap.xml", SiteMap),(r'/CleanUp', CleanUp),("/Site/(.*)/(.*)", SiteSearch), ("/(.*)/(.*)", Search), ("/", Index), ("/(index.html)*", Index) ,("/(.*)", Search) ,("/query", Search)], debug=False)
     wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":
